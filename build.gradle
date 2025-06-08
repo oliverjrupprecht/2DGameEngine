@@ -1,5 +1,11 @@
 plugins {
     id 'java'
+    id 'application'
+}
+
+application {
+    mainClassName = 'Main'
+    applicationDefaultJvmArgs = ['-XstartOnFirstThread']
 }
 
 group = 'org.example'

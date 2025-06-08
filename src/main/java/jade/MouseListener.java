@@ -22,11 +22,11 @@ public class MouseListener {
 
     public static MouseListener get() {
         // returns the current mouse listener or constructs a new one if there are no instances
-        if (instance == null) {
-            instance = new MouseListener();
+        if (MouseListener.instance == null) {
+            MouseListener.instance = new MouseListener();
         }
 
-        return instance;
+        return MouseListener.instance;
     }
 
     public static void mousePosCallback(long window, double xpos, double ypos) {
