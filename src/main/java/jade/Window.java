@@ -3,6 +3,7 @@ package jade;
 import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
+import util.Time;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
@@ -13,12 +14,36 @@ public class Window {
     String title;
     private long glfwWindow;
 
+    public float r, g , b, a;
+    private boolean fadeToBlack = false;
+
     private static Window window = null;
+
+    private static Scene currentScene;
 
     private Window() {
         this.width = 1920;
         this.height = 1080;
         this.title = "Mario";
+        r = 1;
+        g = 1;
+        b = 1;
+        a = 1;
+    }
+
+    public static void changeScene(int newScene) {
+        switch (newScene) {
+            case 0:
+                currentScene = new LevelEditorScene();
+                //currentScene.init();
+                break;
+            case 1:
+                currentScene = new LevelScene();
+                break;
+            default:
+                assert false : "Unknown Scene '" + newScene + "'";
+                break;
+        }
     }
 
     public static Window get() {
@@ -80,19 +105,32 @@ public class Window {
         glfwShowWindow(glfwWindow);
 
         GL.createCapabilities();
+
+        Window.changeScene(0);
     }
 
     public void loop() {
+        float beginTime =  Time.getTime();
+        float endTime = Time.getTime();
+        float dt = -1.0f;
+
         while (!glfwWindowShouldClose(glfwWindow)) {
             glfwPollEvents();
 
-            glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+            glClearColor(r, g, b, a);
             glClear(GL_COLOR_BUFFER_BIT);
 
+            if (dt >= 0) {
+                currentScene.update(dt);
+            }
 
-            if (KeyListener.isKeyPressed(GLFW_KEY_SPACE)) System.out.println("Space key is pressed!");
 
             glfwSwapBuffers(glfwWindow);
+
+            // calculating the delta time (the time past over the last frame of the game)
+            endTime = Time.getTime();
+            dt = endTime - beginTime;
+            beginTime = endTime; // begin time is changed here rather than the beginning of the loop to prevent any OS interrupts from impacting the game
         }
     }
 }
